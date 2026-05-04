@@ -15,6 +15,7 @@ export const SELECTORS = {
 
   // 개별 리뷰 아이템
   reviewItem: [
+    'li.place_apply_pui',       // 2024+ 네이버 모바일 (pui 컴포넌트)
     'li.place_section_content > div',
     '.ReviewList > li',
     'li[data-review-id]',
@@ -22,6 +23,7 @@ export const SELECTORS = {
 
   // 작성자명
   authorName: [
+    'span.pui__NMi-Dp',         // 2024+ pui 컴포넌트
     '.reviewer_name',
     '.name_user',
     '[class*="reviewer"] span:first-child',
@@ -34,20 +36,23 @@ export const SELECTORS = {
 
   // 리뷰 본문
   content: [
+    'a[data-pui-click-code="rvshowmore"]', // 2024+ pui 컴포넌트
+    '.pui__vn15t2 a',
     '.ReviewText',
     '.review_text',
     '.text_comment',
     '[class*="review"] p',
-    '.pui__jhBFMA',  // 2024년 이후 obfuscated class
+    '.pui__jhBFMA',
   ],
 
-  // 작성일
+  // 작성일 — pui__blind: "2026년 4월 22일 수요일" 형식
   date: [
+    '.pui__gfuUIT .pui__blind:last-child', // 2024+ pui (방문일 전체 텍스트)
+    'time[aria-hidden]',                    // 2024+ pui time 요소 (4.22.수 형식)
     'time[datetime]',
     '.date_review',
     '.time_review',
     '[class*="date"]',
-    'span[class*="time"]',
   ],
 
   // 이미지

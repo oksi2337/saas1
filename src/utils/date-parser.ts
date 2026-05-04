@@ -50,6 +50,14 @@ export function parseKoreanDate(raw: string): string {
   // YYYY-MM-DD (날짜 전용)
   if (/^\d{4}-\d{2}-\d{2}$/.test(text)) return dayjs(text).format();
 
+  // YYYY년 M월 D일 (요일)  예: "2026년 4월 22일 수요일"
+  const korFull = text.match(/^(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일/);
+  if (korFull) return dayjs(`${korFull[1]}-${korFull[2].padStart(2,'0')}-${korFull[3].padStart(2,'0')}`).format();
+
+  // M.DD.요일  예: "4.22.수" (네이버 방문일 표시 형식, 연도 없음 → 현재 연도 사용)
+  const mdKor = text.match(/^(\d{1,2})\.(\d{2})\.[월화수목금토일]/);
+  if (mdKor) return dayjs(`${now.year()}-${mdKor[1].padStart(2,'0')}-${mdKor[2]}`).format();
+
   // 완전한 ISO / datetime 속성값
   const parsed = dayjs(text);
   if (parsed.isValid()) return parsed.format();

@@ -185,17 +185,17 @@ async function extractAndNormalize(page: Page): Promise<ScrapedReview[]> {
         item.querySelector('[data-review-id]')?.getAttribute('data-review-id') ||
         '';
 
-      // Author
-      const author = first(item, sels.authorName)?.textContent?.trim() ?? '알 수 없음';
+      // Author — pui__NMi-Dp 우선, 중복 텍스트 제거
+      const authorEl = first(item, sels.authorName);
+      const author = authorEl?.textContent?.trim() ?? '알 수 없음';
 
-      // Rating via aria-label
+      // Rating — 2024+ 네이버 pui UI는 별점 미표시, aria-label 폴백 후 0
       let rating = 0;
       const ratingEl = item.querySelector('[aria-label*="별점"]');
       if (ratingEl) {
         const m = (ratingEl.getAttribute('aria-label') ?? '').match(/별점\s*(\d)/);
         if (m) rating = parseInt(m[1], 10);
       }
-      // 별 아이콘 개수 폴백
       if (rating === 0) {
         const stars = Array.from(item.querySelectorAll(sels.starIcon));
         const filled = stars.filter((s) => {
@@ -205,10 +205,11 @@ async function extractAndNormalize(page: Page): Promise<ScrapedReview[]> {
         if (filled > 0) rating = filled;
       }
 
-      // Content
-      const content = first(item, sels.content)?.textContent?.trim() ?? '';
+      // Content — data-pui-click-code="rvshowmore" 우선
+      const contentEl = first(item, sels.content);
+      const content = contentEl?.textContent?.trim() ?? '';
 
-      // Date
+      // Date — pui__blind:last-child → "2026년 4월 22일 수요일" 형식 우선
       const dateEl = first(item, sels.date);
       const rawDate = dateEl?.getAttribute('datetime') || dateEl?.textContent?.trim() || '';
 
